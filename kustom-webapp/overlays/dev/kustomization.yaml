@@ -1,9 +1,21 @@
-bases:
-- ../../base
+# 声明 Kustomize 的资源类型（可选但推荐）
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 
+# 1. 使用 resources 替代 bases
+resources:
+  - ../../base
+
+# 2. 修复 patches 格式
 patches:
- - replicas.yaml
+  - path: replicas.yaml
+    # 如果你想精确定位资源，可以加上 target（可选）
+    # target:
+    #   kind: Deployment
+    #   name: webapp
 
+# 3. 保持 configMapGenerator
 configMapGenerator:
-- name: mykustom-map
-  env: config.properties
+  - name: mykustom-map
+    envs:              # 注意：如果是文件列表，通常建议用 envs (复数) 或 files
+      - config.properties
